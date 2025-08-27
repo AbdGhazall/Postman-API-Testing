@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "34b3eb90-9273-40c8-a922-caac596ecde8",
+		"name": "PSUT API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47936150"
+	},
+	"item": [
+		{
+			"name": "add new book",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let color = pm.variables.replaceIn('{{$randomColor}}')\r",
+							"let month = pm.variables.replaceIn('{{$randomMonth}}')\r",
+							"let isbn = pm.variables.replaceIn('{{$randomInt}}')*973\r",
+							"let aisle = pm.variables.replaceIn('{{$randomInt}}')*419\r",
+							"let author = pm.variables.replaceIn('{{$randomFullName}}')\r",
+							"\r",
+							"pm.collectionVariables.set(\"newBookName\", color+\" \"+month);\r",
+							"pm.collectionVariables.set(\"newISBN\", isbn);\r",
+							"pm.collectionVariables.set(\"newAisle\", aisle);\r",
+							"pm.collectionVariables.set(\"newAuthorName\", author);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let myresponse = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"newGeneratedID\", myresponse.ID)\r",
+							"\r",
+							"pm.test(\"Check if the book is added\", function(){\r",
+							"    pm.expect(myresponse.Msg).to.eql(\"successfully added\")\r",
+							"    pm.response.to.have.status(200)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"name\":\"{{newBookName}}\",\r\n\"isbn\":\"{{newISBN}}\",\r\n\"aisle\":\"{{newAisle}}\",\r\n\"author\":\"{{newAuthorName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}Addbook.php",
+					"host": [
+						"{{baseURL}}Addbook",
+						"php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get book by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let myresponse = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the response body contains the correct book details\", function (){\r",
+							"    pm.expect(myresponse).to.have.length(1);\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}GetBook.php?ID={{newGeneratedID}}",
+					"host": [
+						"{{baseURL}}GetBook",
+						"php"
+					],
+					"query": [
+						{
+							"key": "ID",
+							"value": "{{newGeneratedID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let myresponse = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the book is deleted\", function (){\r",
+							"    pm.expect(myresponse.msg).to.eql(\"book is successfully deleted\");\r",
+							"    pm.response.to.have.status(200);\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"ID\" : \"{{newGeneratedID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}DeleteBook.php",
+					"host": [
+						"{{baseURL}}DeleteBook",
+						"php"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newBookName",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newISBN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newAisle",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newAuthorName",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newGeneratedID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
